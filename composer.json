@@ -9,12 +9,13 @@
         "User guide": "https://www.drupal.org/docs/drupal-cms",
         "Get help": "https://www.drupal.org/project/cms#support"
     },
-    "repositories": {
-        "drupal": {
+    "repositories": [
+        {
+            "name": "drupal",
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         }
-    },
+    ],
     "require": {
         "composer/composer": "^2.9.8",
         "composer/installers": "^2.3",
