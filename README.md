@@ -18,6 +18,15 @@ The Drupal CMS installer offers a list of features preconfigured with smart defa
 
 After the installer is complete, you will land on the dashboard.
 
+If you want to install Drupal CMS using Drush, use one of the following commands:
+```shell
+# Installs the Starter site template.
+ddev drush site:install --yes
+
+# Installs the Blank site template.
+ddev drush site:install ../recipes/drupal_cms_site_template_base --yes
+```
+
 ## Documentation
 
 * [Drupal CMS User Guide](https://project.pages.drupalcode.org/drupal_cms/)
