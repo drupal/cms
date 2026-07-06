@@ -31,7 +31,6 @@
         "drupal/drupal_cms_forms": "^2",
         "drupal/drupal_cms_google_analytics": "^2",
         "drupal/drupal_cms_installer": "^2",
-        "drupal/drupal_cms_seo_tools": "^2",
         "drupal/drupal_cms_starter": "^2",
         "drupal/webform": "@beta"
     },
@@ -70,7 +69,7 @@
                 "[web-root]/example.gitignore": false
             },
             "allowed-packages": [
-                "drupal/drupal_cms_seo_tools"
+                "drupal/drupal_cms_site_template_base"
             ]
         },
         "installer-paths": {
