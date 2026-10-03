@@ -10,6 +10,8 @@ If you want to use [DDEV](https://ddev.com) to run Drupal CMS locally, follow th
 2. Open the command line and `cd` to the root directory of this project
 3. Run `ddev launch`
 
+To use a different web root, run `ddev config --docroot=new_web_root` _before_ `ddev launch`.
+
 Drupal CMS has the same system requirements as Drupal core, so you can use your preferred setup to run it locally. [See the Drupal User Guide for more information](https://www.drupal.org/docs/user_guide/en/installation-chapter.html) on how to set up Drupal.
 
 ### Installation options
