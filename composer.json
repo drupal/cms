@@ -33,7 +33,8 @@
         "drupal/drupal_cms_google_analytics": "^2",
         "drupal/drupal_cms_installer": "^2",
         "drupal/drupal_cms_multilingual": "^2",
-        "drupal/drupal_cms_starter": "^2"
+        "drupal/drupal_cms_starter": "^2",
+        "internal/dload": "^1.17"
     },
     "require-dev": {
         "drush/drush": "^13.7"
@@ -99,7 +100,8 @@
     },
     "scripts": {
         "post-update-cmd": [
-            "@php -r \"@unlink('vendor/bin/composer');\""
+            "@php -r \"@unlink('vendor/bin/composer');\"",
+            "dload get --quiet --path=vendor/bin"
         ]
     }
 }
