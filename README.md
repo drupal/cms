@@ -4,7 +4,7 @@ Drupal CMS is a fast-moving open source product that enables site builders to ea
 
 ## Getting started
 
-If you want to use [DDEV](https://ddev.com) to run Drupal CMS locally, follow these instructions:
+If you want to use [DDEV](https://ddev.com) (recommended) to run Drupal CMS locally, follow these instructions:
 
 1. Install DDEV following the [documentation](https://ddev.com/get-started/)
 2. Open the command line and `cd` to the root directory of this project
@@ -20,13 +20,14 @@ The Drupal CMS installer offers a list of features preconfigured with smart defa
 
 After the installer is complete, you will land on the dashboard.
 
-If you want to install Drupal CMS using Drush, use one of the following commands:
-```shell
-# Installs the Starter site template.
-ddev drush site:install --yes
+If you want to install Drupal CMS using Drush, use the following commands:
 
-# Installs the Blank site template.
-ddev drush site:install /var/www/html/recipes/drupal_cms_site_template_base --yes
+```shell
+# Download a site template -- for example, Starter.
+ddev composer require drupal/drupal_cms_starter --update-with-all-dependencies
+
+# Use it to install Drupal.
+ddev drush site:install /var/www/html/recipes/drupal_cms_starter --yes
 ```
 
 ## Documentation
