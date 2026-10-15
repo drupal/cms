@@ -26,7 +26,7 @@ If you want to install Drupal CMS using Drush, use one of the following commands
 ddev drush site:install --yes
 
 # Installs the Blank site template.
-ddev drush site:install ../recipes/drupal_cms_site_template_base --yes
+ddev drush site:install /var/www/html/recipes/drupal_cms_site_template_base --yes
 ```
 
 ## Documentation
