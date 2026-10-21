@@ -18,9 +18,9 @@ RUN a2enmod headers
 # any patch files. The archive always contains these directories (even if
 # empty), so these COPY instructions are safe.
 COPY composer.* patches.* ./
-COPY patches/ patches/
-COPY config/ config/
-COPY content/ content/
+COPY patches/ ./
+COPY config/ ./
+COPY content/ ./
 
 # Install the site's dependencies. Because we have a lock file, this
 # installs exactly what the lock file says, adding or removing packages
@@ -217,15 +217,11 @@ is_installed() {
 
 case "${1:-}" in
   release)
-    # Run database updates and import config. Used by Fly.io's
-    # release_command (see fly.toml), but works anywhere.
-    #
-    # If Drupal isn't installed yet (e.g., the very first deploy), skip
-    # gracefully. It will be installed automatically when the container starts.
+    # Run database updates and import config. If Drupal isn't installed yet
+    # (e.g., the very first deploy), skip gracefully. It will be installed
+    # automatically when the container starts.
     if is_installed; then
       drush deploy
-    else
-      echo "Drupal is not installed yet. Skipping release."
     fi
     ;;
 

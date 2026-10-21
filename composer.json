@@ -98,5 +98,8 @@
             "dr config:export --yes",
             "dr content:export:all ../content"
         ]
+    },
+    "scripts-descriptions": {
+        "pre-deploy": "Exports your site's configuration and content for deployment."
     }
 }
