@@ -22,6 +22,7 @@ Desktop.ini
 $RECYCLE.BIN/
 
 # Site-specific settings and files.
+.env
 /web/sites/*/settings*.php
 /web/sites/*/services*.yml
 /web/sites/*/files

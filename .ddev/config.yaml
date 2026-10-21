@@ -19,3 +19,5 @@ hooks:
         fi
     - composer: install
     - composer: drupal:recipe-unpack
+web_environment:
+  - DRUPAL_CONFIG_SYNC_DIRECTORY=$DDEV_APPROOT/config

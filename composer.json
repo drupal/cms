@@ -92,6 +92,11 @@
         "post-update-cmd": [
             "@php -r \"@unlink('vendor/bin/composer');\"",
             "dload get --quiet --path=vendor/bin"
+        ],
+        "pre-deploy": [
+            "@composer validate --strict --no-check-publish --no-check-all --no-check-version",
+            "dr config:export --yes",
+            "dr content:export:all ../content"
         ]
     }
 }
