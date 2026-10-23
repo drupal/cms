@@ -91,6 +91,9 @@
     "scripts": {
         "post-update-cmd": [
             "@php -r \"@unlink('vendor/bin/composer');\""
+        ],
+        "post-install-cmd": [
+            "@post-update-cmd"
         ]
     }
 }
