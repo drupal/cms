@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+## Exports your site's configuration and content for deployment.
+## Usage: pre-deploy
+## Example: "ddev pre-deploy"
+
+# Abort if any step fails.
+set -e
+
+composer validate --strict --no-check-publish --no-check-all --no-check-version
+DRUPAL_CONFIG_SYNC_DIRECTORY="$DDEV_APPROOT/config" dr config:export --yes
+dr content:export:all "$DDEV_APPROOT/content"

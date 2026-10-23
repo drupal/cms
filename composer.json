@@ -96,14 +96,6 @@
         ],
         "post-install-cmd": [
             "@post-update-cmd"
-        ],
-        "pre-deploy": [
-            "@composer validate --strict --no-check-publish --no-check-all --no-check-version",
-            "dr config:export --yes",
-            "dr content:export:all ../content"
         ]
-    },
-    "scripts-descriptions": {
-        "pre-deploy": "Exports your site's configuration and content for deployment."
     }
 }
