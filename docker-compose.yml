@@ -10,6 +10,12 @@ services:
       DRUSH_OPTIONS_URI: "localhost:8080"
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/start.sh", "check"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
 ##
 ## To use a production-ready database, uncomment and edit everything below.
 ##
