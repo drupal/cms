@@ -1,4 +1,4 @@
-FROM drupal:11-php8.4-apache
+FROM docker.io/library/drupal:11-php8.4-apache
 
 WORKDIR /opt/drupal
 
@@ -18,9 +18,9 @@ RUN a2enmod headers
 # any patch files. The archive always contains these directories (even if
 # empty), so these COPY instructions are safe.
 COPY composer.* patches.* ./
-COPY patches/ ./
-COPY config/ ./
-COPY content/ ./
+COPY config/ ./config/
+COPY content/ ./content/
+COPY patches/ ./patches/
 
 # Install the site's dependencies. Because we have a lock file, this
 # installs exactly what the lock file says, adding or removing packages
