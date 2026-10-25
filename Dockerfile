@@ -215,6 +215,9 @@ is_installed() {
   drush status --field=bootstrap 2>/dev/null | grep -q "Successful"
 }
 
+# Ensure the correct database driver is configured.
+yaml-cli update:value config/core.extension.yml "module.$(drush status --field=db-driver)" 0 --type=integer
+
 case "${1:-}" in
   check)
     is_installed
@@ -235,9 +238,6 @@ case "${1:-}" in
 
     # If Drupal isn't installed yet, install it and import content.
     if ! is_installed; then
-      # Ensure the correct database driver is configured.
-      yaml-cli update:value config/core.extension.yml "module.$(drush status --field=db-driver)" 0 --type=integer
-
       drush site:install --existing-config --yes
       drush content:import ../content --yes
 

@@ -1,4 +1,5 @@
-# Dependencies managed by Composer.
+# Dependencies managed by Composer and npm.
+node_modules/
 /recipes
 /vendor
 /web/core
