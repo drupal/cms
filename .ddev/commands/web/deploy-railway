@@ -21,7 +21,7 @@ composer exec drush -- content:export:all "$PWD/content"
 npm install --save-dev @railway/cli railway
 
 # Everything we're about to do requires us to be logged in.
-railway whoami || railway login --browserless
+npx railway whoami || npx railway login --browserless
 
 # Define and configure the project's services, if not already done.
 CONFIG=.railway/railway.ts
@@ -58,28 +58,28 @@ EOF
 # Initialize a project with an auto-generated name, and grab its ID from the
 # JSON output. The `-e` makes jq fail if there's no ID, which stops the script.
 if [ -z "${RAILWAY_PROJECT_ID:-}" ]; then
-  RAILWAY_PROJECT_ID=$(railway init --name="" --json | jq -e -r '.id')
+  RAILWAY_PROJECT_ID=$(npx railway init --name="" --json | jq -e -r '.id')
   # Save the project ID for later use.
   echo "RAILWAY_PROJECT_ID=$RAILWAY_PROJECT_ID" >> "$PWD/.ddev/.env"
 
   # Apply the IaC configuration. We only do this once, when initializing the
   # project, because we're setting up the infrastructure. Once that's done, the
   # developer owns it.
-  railway config apply --yes
+  npx railway config apply --yes
 
   # Generate a public domain, and grab it from the JSON output.
-  DOMAIN=$(railway domain --service=web --port=8080 --json | jq -e -r '.domain')
+  DOMAIN=$(npx railway domain --service=web --port=8080 --json | jq -e -r '.domain')
 
   # Ensure Drush generates correct URLs and Drupal trusts Railway hosts.
-  railway variable set DRUSH_OPTIONS_URI="$DOMAIN" DRUPAL_TRUSTED_HOSTS="${DOMAIN#*://},healthcheck.railway.app" --service=web
+  npx railway variable set DRUSH_OPTIONS_URI="$DOMAIN" DRUPAL_TRUSTED_HOSTS="${DOMAIN#*://},healthcheck.railway.app" --service=web
 
   # Create a random hash salt and send it straight to Railway. Using --stdin
   # keeps the secret out of the command line.
-  openssl rand -hex 32 | railway variable set DRUPAL_HASH_SALT --stdin --service=web
+  openssl rand -hex 32 | npx railway variable set DRUPAL_HASH_SALT --stdin --service=web
 fi
 
 # Ensure Railway ignores everything Docker does when building the image.
 test -f .railwayignore || ln -s .dockerignore .railwayignore
 
 # Bring the project online, but don't wait up.
-railway up --detach
+npx railway up --detach
