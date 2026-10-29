@@ -10,12 +10,9 @@ set -euo pipefail
 # Confirm that the project is in a good state.
 composer validate --strict --no-check-publish --no-check-all --no-check-version
 
-composer exec drush -- config:export --yes --destination="$PWD/config"
-# @todo Use the next line in Drupal CMS 2.3.0.
-# DRUPAL_CONFIG_SYNC_DIRECTORY="$PWD/config" dr config:export --yes
-
-# @todo Use `dr` in Drupal CMS 2.3.0.
-composer exec drush -- content:export:all "$PWD/content"
+# Export configuration and content.
+DRUPAL_CONFIG_SYNC_DIRECTORY="$PWD/config" composer exec dr -- config:export --yes
+composer exec dr -- content:export:all "$PWD/content"
 
 # Install the Railway CLI and SDK.
 npm install --save-dev @railway/cli railway
@@ -80,6 +77,10 @@ fi
 
 # Ensure Railway ignores everything Docker does when building the image.
 test -f .railwayignore || ln -s .dockerignore .railwayignore
+
+# Set the WEB_ROOT variable expected by the Dockerfile. Railway injects these into
+# the build process, per https://docs.railway.com/variables.
+npx railway variable set WEB_ROOT="$DDEV_DOCROOT"
 
 # Bring the project online, but don't wait up.
 npx railway up --detach

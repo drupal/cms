@@ -14,13 +14,15 @@ RUN rm -r -f /var/lib/apt/lists/*
 # Enable mod_headers so the security headers in apache.conf work.
 RUN a2enmod headers
 
-# Replace the base image's Composer files with the site's own, along with
-# any patch files. The archive always contains these directories (even if
-# empty), so these COPY instructions are safe.
+# The path of the web root in the build context.
+ARG WEB_ROOT=web
+
 COPY composer.* patches.* ./
 COPY config/ ./config/
 COPY content/ ./content/
 COPY patches/ ./patches/
+COPY ${WEB_ROOT}/modules/custom/ ./web/modules/custom/
+COPY ${WEB_ROOT}/themes/custom/ ./web/themes/custom/
 
 # Disable the manipulation of `.dockerignore` by the scaffold plugin; it's
 # irrelevant in this context.

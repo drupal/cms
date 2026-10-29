@@ -13,8 +13,10 @@ hooks:
 
           if [ "$DDEV_DOCROOT" = "." ]; then
             sed "${FLAGS[@]}" "s|^/web/|/|g" .gitignore
+            test -d web && mv web/* .
           else
             sed "${FLAGS[@]}" "s|^/web/|/$DDEV_DOCROOT/|g" .gitignore
+            test -d web && mv web $DDEV_DOCROOT
           fi
         fi
     - composer: install
