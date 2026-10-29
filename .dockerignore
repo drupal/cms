@@ -1,4 +1,3 @@
-.env
 *.md
 *.txt
 .ddev
@@ -6,7 +5,3 @@ docker-compose.yml
 .git
 .gitignore
 .gitattributes
-node_modules
-recipes
-vendor
-web

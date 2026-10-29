@@ -22,6 +22,10 @@ COPY config/ ./config/
 COPY content/ ./content/
 COPY patches/ ./patches/
 
+# Disable the manipulation of `.dockerignore` by the scaffold plugin; it's
+# irrelevant in this context.
+RUN composer config extra.drupal-scaffold.file-mapping --merge --json '{".dockerignore": false}'
+
 # Install the site's dependencies. Because we have a lock file, this
 # installs exactly what the lock file says, adding or removing packages
 # as needed to match. The base image's Drupal core stays if the versions

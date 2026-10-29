@@ -1,5 +1,10 @@
+# ###
+# Every pattern below is compatible with .dockerignore, because this file is automatically
+# appended to .dockerignore by the scaffold configuration in `composer.json`.
+# ###
+
 # Dependencies managed by Composer and npm.
-node_modules/
+**/node_modules
 /recipes
 /vendor
 /web/core
@@ -9,18 +14,18 @@ node_modules/
 /web/themes/contrib
 
 # macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-.Spotlight-V100
-.Trashes
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+**/._*
+**/.Spotlight-V100
+**/.Trashes
 
 # Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
+**/Thumbs.db
+**/ehthumbs.db
+**/Desktop.ini
+**/$RECYCLE.BIN/
 
 # Site-specific settings and files.
 .env

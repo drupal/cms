@@ -59,6 +59,10 @@
                 "web-root": "web/"
             },
             "file-mapping": {
+                ".dockerignore": {
+                    "append": ".gitignore",
+                    "force-append": true
+                },
                 "[web-root]/example.gitignore": false
             },
             "allowed-packages": [
