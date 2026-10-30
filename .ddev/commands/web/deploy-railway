@@ -10,9 +10,8 @@ set -euo pipefail
 # Confirm that the project is in a good state.
 composer validate --strict --no-check-publish --no-check-all --no-check-version
 
-# Export configuration and content.
+# Export configuration.
 DRUPAL_CONFIG_SYNC_DIRECTORY="$PWD/config" composer exec dr -- config:export --yes
-composer exec dr -- content:export:all "$PWD/content"
 
 # Install the Railway CLI and SDK.
 npm install --save-dev @railway/cli railway
@@ -52,6 +51,9 @@ export default defineRailway(() => {
 });
 EOF
 
+# The Dockerfile expects the content directory to exist, even if empty.
+mkdir -p content
+
 # Initialize a project with an auto-generated name, and grab its ID from the
 # JSON output. The `-e` makes jq fail if there's no ID, which stops the script.
 if [ -z "${RAILWAY_PROJECT_ID:-}" ]; then
@@ -73,6 +75,9 @@ if [ -z "${RAILWAY_PROJECT_ID:-}" ]; then
   # Create a random hash salt and send it straight to Railway. Using --stdin
   # keeps the secret out of the command line.
   openssl rand -hex 32 | npx railway variable set DRUPAL_HASH_SALT --stdin --service=web
+else
+  # This is the initial deployment, so export the content.
+  composer exec dr -- content:export:all "$PWD/content"
 fi
 
 # Ensure Railway ignores everything Docker does when building the image.
@@ -84,3 +89,6 @@ npx railway variable set WEB_ROOT="$DDEV_DOCROOT"
 
 # Bring the project online, but don't wait up.
 npx railway up --detach
+
+# We no longer need the exported content.
+rm -r -f content

@@ -19,5 +19,7 @@ hooks:
             test -d web && mv web $DDEV_DOCROOT
           fi
         fi
+    # Generate a hash salt in .env for Docker Compose.
+    - exec: test -f .env || echo "DRUPAL_HASH_SALT=$(openssl rand -hex 32)" > .env
     - composer: install
     - composer: drupal:recipe-unpack
