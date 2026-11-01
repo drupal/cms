@@ -188,8 +188,9 @@ ENV PATH=${PATH}:/opt/drupal/vendor/bin
 # By default, run in a SQLite database.
 ENV DATABASE_URL=sqlite://localhost/sites/default/files/.ht.sqlite
 
-# Where we copied configuration, relative to the web root.
-ENV DRUPAL_CONFIG_SYNC_DIRECTORY=../config
+# Where we copied configuration. This is an absolute path, so it works no
+# matter where the web root is.
+ENV DRUPAL_CONFIG_SYNC_DIRECTORY=/opt/drupal/config
 
 # Apache listens on port 8080 (set in ports.conf).
 EXPOSE 8080
@@ -235,8 +236,10 @@ case "${1:-}" in
     if ! is_installed; then
       drush site:install --existing-config --yes
 
+      # Drush moves into the web root when it starts, so a relative path would
+      # point to the wrong place. $PWD is the WORKDIR, so this path is absolute.
       if [ -d content ]; then
-        drush content:import ../content --yes
+        drush content:import "$PWD/content" --yes
       fi
 
       # Lock down settings.php now that install is done.
