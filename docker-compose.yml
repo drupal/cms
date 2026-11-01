@@ -5,7 +5,7 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - ./files:/opt/drupal/web/sites/default/files
+      - ./files:/opt/drupal/site/files
     environment:
       DRUSH_OPTIONS_URI: "localhost:8080"
     env_file:

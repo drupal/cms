@@ -14,32 +14,6 @@ RUN rm -r -f /var/lib/apt/lists/*
 # Enable mod_headers so the security headers in apache.conf work.
 RUN a2enmod headers
 
-# The path of the web root in the build context.
-ARG WEB_ROOT=web
-
-COPY composer.* patches.* ./
-COPY config/ ./config/
-COPY content/ ./content/
-COPY patches/ ./patches/
-COPY ${WEB_ROOT}/modules/custom/ ./web/modules/custom/
-COPY ${WEB_ROOT}/themes/custom/ ./web/themes/custom/
-
-# Disable the manipulation of `.dockerignore` by the scaffold plugin; it's
-# irrelevant in this context.
-RUN composer config extra.drupal-scaffold.file-mapping --merge --json '{".dockerignore": false}'
-
-# Install the site's dependencies. Because we have a lock file, this
-# installs exactly what the lock file says, adding or removing packages
-# as needed to match. The base image's Drupal core stays if the versions
-# are compatible; otherwise Composer replaces it.
-RUN composer install --no-dev --no-interaction --prefer-dist
-
-# Add Drush for deploy, install, and cron commands. The site might not
-# have Drush in its own composer.json (it may be in require-dev only),
-# so we add it here. If it's already present, Composer keeps the
-# existing version.
-RUN composer require --no-interaction --update-no-dev drush/drush
-
 # Add Drupal-specific PHP settings.
 RUN cat <<'EOF' > /usr/local/etc/php/conf.d/drupal.ini
 ; Drupal recommends at least 256M for sites with many modules.
@@ -67,6 +41,10 @@ date.timezone = UTC
 realpath_cache_ttl = 600
 EOF
 
+# Switch Apache from port 80 to 8080. Port 8080 is the standard for
+# containers behind a reverse proxy and doesn't require root to bind.
+RUN echo "Listen 8080" > /etc/apache2/ports.conf
+
 # Add basic security and compression headers that every site should have.
 RUN cat <<'EOF' > /etc/apache2/conf-enabled/drupal.conf
 # Prevent browsers from guessing the content type.
@@ -85,10 +63,41 @@ Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 EOF
 
+# Make the default VirtualHost listen on a wildcard port.
+RUN cat <<'EOF' > /etc/apache2/sites-enabled/000-default.conf
+<VirtualHost *:*>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+# Replace the Drupal installation that's already here.
+RUN rm -r -f vendor web
+COPY . .
+
+# Disable the manipulation of `.dockerignore` by the scaffold plugin; it's
+# irrelevant in this context.
+RUN composer config extra.drupal-scaffold.file-mapping --merge --json '{".dockerignore": false}'
+
+# Install the site's dependencies.
+RUN composer install --no-dev --no-interaction --prefer-dist
+
+# Add Drush for deploy, install, and cron commands. The site might not have
+# Drush in its own composer.json (it may be in require-dev only), so add it
+# here. If it's already present, Composer keeps the existing version.
+RUN composer require --no-interaction --update-no-dev drush/drush
+
+# Create a symlink to the site directory. We don't know the web root, so we ask
+# Composer where it is and use `sed` to strip the trailing slash.
+RUN ln -s $(composer config extra.drupal-scaffold.locations.web-root | sed 's|/$||')/sites/default site
+
 # Create `settings.php` by adding Docker-specific stuff to default settings.
 RUN <<'SHELL'
 {
-  cat web/sites/default/default.settings.php
+  cat site/default.settings.php
   cat <<'EOF'
 // If DRUPAL_HASH_SALT is not set, Drupal falls back to whatever hash
 // salt is in the main settings.php (which is fine for local demos).
@@ -149,7 +158,7 @@ if (getenv('DRUPAL_REVERSE_PROXY')) {
 }
 
 // Uploaded files are stored on a volume mount at the standard Drupal files
-// path. The volume should be mounted at web/sites/default/files when running
+// path. The volume should be mounted at /opt/drupal/site/files when running
 // the container.
 $settings['file_temp_path'] = '/tmp';
 
@@ -166,31 +175,12 @@ $settings['file_temp_path'] = '/tmp';
 $settings['s3fs.use_s3_for_public'] = TRUE;
 $settings['s3fs.use_s3_for_private'] = TRUE;
 EOF
-} > web/sites/default/settings.php
+} > site/settings.php
 SHELL
 
-# Switch Apache from port 80 to 8080. Port 8080 is the standard for
-# containers behind a reverse proxy and doesn't require root to bind.
-RUN echo "Listen 8080" > /etc/apache2/ports.conf
-
-# Make the default VirtualHost listen on a wildcard port.
-RUN cat <<'EOF' > /etc/apache2/sites-enabled/000-default.conf
-<VirtualHost *:*>
-    ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/html
-
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-EOF
-
-# Ensure the default site directory is set up properly and writable during
-# installation, but settings files themselves are read-only to avoid a
-# warning from Drupal. The files directory is expected to be a volume mount;
-# create it so Drupal doesn't complain if nothing is mounted yet.
-RUN mkdir -p web/sites/default/files
-RUN chown www-data:www-data web/sites/default/files
-RUN chmod 755 web/sites/default
+# The files directory must exist for installation to succeed.
+RUN mkdir -p site/files
+RUN chown www-data:www-data site/files
 
 # Drush and other CLI tools live in vendor/bin.
 ENV PATH=${PATH}:/opt/drupal/vendor/bin
@@ -207,13 +197,12 @@ EXPOSE 8080
 # Write the entry point and make it executable.
 RUN cat <<'EOF' > /usr/local/bin/start.sh
 #!/usr/bin/env bash
-# Commands:
 #
 #   docker run mysite            Start Apache (the default). Installs Drupal
 #                                automatically on first run.
 #   docker run mysite release    Deploy: run database updates and config import.
 #   docker run mysite bash       Run an arbitrary command.
-
+#
 set -euo pipefail
 
 # Returns 0 if Drupal is installed and can bootstrap.
@@ -240,19 +229,22 @@ case "${1:-}" in
 
   ""|apache2-foreground)
     # No arguments or the default CMD: install if needed, and start Apache.
-    mkdir -p web/sites/default/files
+    mkdir -p site/files
 
     # If Drupal isn't installed yet, install it and import content.
     if ! is_installed; then
       drush site:install --existing-config --yes
-      drush content:import ../content --yes
+
+      if [ -d content ]; then
+        drush content:import ../content --yes
+      fi
 
       # Lock down settings.php now that install is done.
-      chmod 444 web/sites/default/settings.php
+      chmod 444 site/settings.php
     fi
 
     # Make sure the files directory is writable.
-    chown -R www-data:www-data web/sites/default/files
+    chown -R www-data:www-data site/files
 
     # Railway, for whatever reason, enables mpm_event, which breaks Apache.
     # PHP needs mpm_prefork, which is already enabled. We also disable

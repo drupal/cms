@@ -83,10 +83,6 @@ fi
 # Ensure Railway ignores everything Docker does when building the image.
 test -f .railwayignore || ln -s .dockerignore .railwayignore
 
-# Set the WEB_ROOT variable expected by the Dockerfile. Railway injects these into
-# the build process, per https://docs.railway.com/variables.
-npx railway variable set WEB_ROOT="$DDEV_DOCROOT"
-
 # Bring the project online, but don't wait up.
 npx railway up --detach
 
