@@ -2,6 +2,7 @@
 *.txt
 .ddev
 docker-compose.yml
+fly*.toml
 .git
 .gitignore
 .gitattributes
