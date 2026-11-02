@@ -1,6 +1,0 @@
-{
-    "_comment": [
-        "Use this file to define patches, per the documentation at https://docs.cweagans.net/composer-patches/usage/defining-patches."
-    ],
-    "patches": {}
-}
