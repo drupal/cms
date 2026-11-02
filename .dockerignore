@@ -5,3 +5,7 @@ docker-compose.yml
 .git
 .gitignore
 .gitattributes
+package.json
+package-lock.json
+.railway
+.railwayignore

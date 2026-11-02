@@ -236,12 +236,9 @@ case "${1:-}" in
     if ! is_installed; then
       drush site:install --existing-config --yes
 
-      # Drush moves into the web root when it starts, so a relative path would
-      # point to the wrong place. $PWD is the WORKDIR, so this path is absolute.
       if [ -d content ]; then
-        drush content:import "$PWD/content" --yes
+        dr content:import "$PWD/content" --yes
       fi
-
       # Lock down settings.php now that install is done.
       chmod 444 site/settings.php
     fi
