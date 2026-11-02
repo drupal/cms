@@ -237,7 +237,7 @@ case "${1:-}" in
       drush site:install --existing-config --yes
 
       if [ -d content ]; then
-        dr content:import "$PWD/content" --yes
+        dr content:import "$PWD/content"
       fi
       # Lock down settings.php now that install is done.
       chmod 444 site/settings.php
