@@ -4,13 +4,35 @@ Drupal CMS is a fast-moving open source product that enables site builders to ea
 
 ## Getting started
 
-If you want to use [DDEV](https://ddev.com) (recommended) to run Drupal CMS locally, follow these instructions:
+Drupal CMS works with [DDEV](https://ddev.com) and has experimental support for [Drupack](https://drupal.org/project/drupack). DDEV is a full-featured, Docker-based development environment. Drupack is a fast, production-ready server that doesn't include development tools.
+
+### DDEV (recommended)
 
 1. Install DDEV following the [documentation](https://ddev.com/get-started/)
 2. Open the command line and `cd` to the root directory of this project
 3. Run `ddev launch`
 
 To use a different web root, run `ddev config --docroot=new_web_root` _before_ `ddev launch`.
+
+### Drupack (experimental)
+
+Open the command line and `cd` into the root directory of this project, then:
+
+1. Download Drupack:
+```shell
+# macOS and Linux:
+curl -fsSL https://drupack.tresbien.tech/install.sh | sh
+
+# PowerShell (Windows):
+irm https://drupack.tresbien.tech/install.ps1 | iex
+```
+2. [Download `composer.phar`](https://getcomposer.org/download/latest-stable/composer.phar) into this directory
+3. Install dependencies and run:
+```shell
+./drupack composer.phar i
+./drupack
+```
+4. Delete `composer.phar` (optional)
 
 Drupal CMS has the same system requirements as Drupal core, so you can use your preferred setup to run it locally. [See the Drupal User Guide for more information](https://www.drupal.org/docs/user_guide/en/installation-chapter.html) on how to set up Drupal.
 
