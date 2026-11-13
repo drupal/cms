@@ -95,7 +95,8 @@
     "scripts": {
         "post-update-cmd": [
             "@php -r \"@unlink('vendor/bin/composer');\"",
-            "dload get --quiet --path=vendor/bin"
+            "dload get --quiet --path=vendor/bin",
+            "@composer drupal:recipe-unpack"
         ],
         "post-install-cmd": [
             "@post-update-cmd"

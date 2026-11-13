@@ -18,4 +18,3 @@ hooks:
           fi
         fi
     - composer: install
-    - composer: drupal:recipe-unpack
