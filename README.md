@@ -26,13 +26,11 @@ curl -fsSL https://drupack.tresbien.tech/install.sh | sh
 # PowerShell (Windows):
 irm https://drupack.tresbien.tech/install.ps1 | iex
 ```
-2. [Download `composer.phar`](https://getcomposer.org/download/latest-stable/composer.phar) into this directory
-3. Install dependencies and run:
+2. Install dependencies and run:
 ```shell
-./drupack composer.phar i
+./drupack composer i
 ./drupack
 ```
-4. Delete `composer.phar` (optional)
 
 Drupal CMS has the same system requirements as Drupal core, so you can use your preferred setup to run it locally. [See the Drupal User Guide for more information](https://www.drupal.org/docs/user_guide/en/installation-chapter.html) on how to set up Drupal.
 
