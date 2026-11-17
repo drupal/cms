@@ -28,8 +28,7 @@ irm https://drupack.tresbien.tech/install.ps1 | iex
 ```
 2. Install dependencies and run:
 ```shell
-./drupack composer i
-./drupack
+./drupack --yes
 ```
 
 Drupal CMS has the same system requirements as Drupal core, so you can use your preferred setup to run it locally. [See the Drupal User Guide for more information](https://www.drupal.org/docs/user_guide/en/installation-chapter.html) on how to set up Drupal.
