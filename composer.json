@@ -27,6 +27,7 @@
         "drupal/core-recommended": "^11.5",
         "drupal/core-vendor-hardening": "^11.5",
         "drupal/drupal_cms_installer": "^2",
+        "drupal/site_template_helper": "^2",
         "internal/dload": "^1.17"
     },
     "require-dev": {
